@@ -69,53 +69,63 @@ const HeroCarousel = ({ cards }: HeroCarouselProps) => {
       {cards.map((card, index) => (
         <div 
           key={card.cardId}
-          className="flex-none snap-start bg-white rounded-2xl shadow-lg border border-gray-100 p-6"
-          style={{ width: '84vw', minHeight: '280px' }}
+          className="flex-none snap-start glass-card group hover:glass-card-hover transition-all duration-500 ease-out transform hover:scale-[1.02] animate-fade-in"
+          style={{ 
+            width: '84vw', 
+            minHeight: '280px',
+            animationDelay: `${index * 100}ms`
+          }}
         >
-          {/* Badge */}
-          <div className="mb-4">
-            <span 
-              className="inline-block px-3 py-1 rounded-full text-white text-sm font-semibold"
-              style={{ backgroundColor: '#F36F24' }}
+          {/* Glass overlay background */}
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-xl border border-white/20" />
+          
+          {/* Content container */}
+          <div className="relative z-10 p-6 h-full flex flex-col">
+            {/* Badge */}
+            <div className="mb-4">
+              <span 
+                className="inline-block px-3 py-1 rounded-full text-white text-sm font-semibold shadow-lg backdrop-blur-sm"
+                style={{ backgroundColor: '#F36F24' }}
+              >
+                ₹0 for life
+              </span>
+            </div>
+
+            {/* Card Name */}
+            <h3 className="text-xl font-semibold text-gray-900 mb-2 leading-tight">
+              {card.name}
+            </h3>
+
+            {/* Reward Headline */}
+            <p className="text-lg font-medium mb-4" style={{ color: '#0066CC' }}>
+              {card.rewardHeadline}
+            </p>
+
+            {/* Sub-headline for lounge */}
+            {card.tags.includes('lounge') && (
+              <p className="text-gray-600 mb-4">4 lounges / year</p>
+            )}
+
+            {/* Perks Row */}
+            <div className="space-y-2 mb-6 flex-grow">
+              {getPerksDisplay(card.tags).map((perk, idx) => (
+                <div key={idx} className="flex items-center text-gray-700">
+                  <span className="w-2 h-2 bg-green-500 rounded-full mr-3 flex-shrink-0 shadow-sm"></span>
+                  <span className="text-sm">{perk}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* CTA Button */}
+            <button
+              onClick={() => handleApplyClick(card.cardId, index)}
+              className="w-full glass-button group/btn text-white py-3 px-4 rounded-xl font-medium flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-2xl transform hover:scale-[1.02]"
+              style={{ minHeight: '44px' }}
             >
-              ₹0 for life
-            </span>
+              Apply
+              <ChevronRight size={18} className="transition-transform duration-300 group-hover/btn:translate-x-1" />
+            </button>
           </div>
-
-          {/* Card Name */}
-          <h3 className="text-xl font-semibold text-gray-900 mb-2 leading-tight">
-            {card.name}
-          </h3>
-
-          {/* Reward Headline */}
-          <p className="text-lg font-medium mb-4" style={{ color: '#0066CC' }}>
-            {card.rewardHeadline}
-          </p>
-
-          {/* Sub-headline for lounge */}
-          {card.tags.includes('lounge') && (
-            <p className="text-gray-600 mb-4">4 lounges / year</p>
-          )}
-
-          {/* Perks Row */}
-          <div className="space-y-2 mb-6">
-            {getPerksDisplay(card.tags).map((perk, idx) => (
-              <div key={idx} className="flex items-center text-gray-700">
-                <span className="w-2 h-2 bg-green-500 rounded-full mr-3 flex-shrink-0"></span>
-                <span className="text-sm">{perk}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* CTA Button */}
-          <button
-            onClick={() => handleApplyClick(card.cardId, index)}
-            className="w-full bg-gray-900 text-white py-3 px-4 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors"
-            style={{ minHeight: '44px' }}
-          >
-            Apply
-            <ChevronRight size={18} />
-          </button>
         </div>
       ))}
     </div>
