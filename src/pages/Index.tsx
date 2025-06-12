@@ -11,15 +11,15 @@ import { trackEvent } from '@/utils/analytics';
 
 const Index = () => {
   const [cards, setCards] = useState(cardsData);
-  const [selectedChips, setSelectedChips] = useState<string[]>([]);
+  const [selectedTag, setSelectedTag] = useState<string>('lounge');
   const [showCompareCTA, setShowCompareCTA] = useState(false);
   const [showCGLite, setShowCGLite] = useState(false);
   const [showCGSim, setShowCGSim] = useState(false);
 
   // Weight map for filtering algorithm
-  const weightMap = {
+  const weightMap: Record<string, number> = {
     lounge: 3,
-    fuel: 2,
+    fuel: 2.5,
     upi: 2,
     forex: 1.5,
     customisable: 1,
@@ -31,7 +31,7 @@ const Index = () => {
   useEffect(() => {
     // Track page load
     trackEvent('aly_lp_view', {
-      chips: selectedChips,
+      selectedTag,
       rank: cards.map(c => c.cardId)
     });
 
@@ -42,29 +42,31 @@ const Index = () => {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [selectedChips, cards]);
+  }, [selectedTag, cards]);
 
-  const handleChipToggle = (tag: string) => {
-    const newChips = selectedChips.includes(tag)
-      ? selectedChips.filter(t => t !== tag)
-      : [...selectedChips, tag];
+  const handleTagSelect = (tag: string) => {
+    setSelectedTag(tag);
     
-    setSelectedChips(newChips);
-    
-    // Calculate scores and re-sort cards
-    const sortedCards = [...cards].map(card => {
-      const score = newChips.reduce((acc, chip) => {
-        return card.tags.includes(chip) ? acc + weightMap[chip as keyof typeof weightMap] : acc;
-      }, 0);
-      return { ...card, score };
-    }).sort((a, b) => b.score - a.score);
+    // Binary scoring: 1 if card has tag, 0 if not
+    const sortedCards = [...cardsData].map(card => {
+      const score = card.tags.includes(tag) ? weightMap[tag] : 0;
+      return { 
+        ...card, 
+        score,
+        reactKey: `${tag}-${card.cardId}` // Force remount for FLIP animation
+      };
+    }).sort((a, b) => {
+      // Sort by score first, then by originalRank for tie-breaking
+      if (b.score !== a.score) return b.score - a.score;
+      return a.originalRank - b.originalRank;
+    });
 
     setCards(sortedCards);
     
-    // Track chip toggle
+    // Track tag selection
     trackEvent('chip_toggle', {
       tag,
-      state: newChips.includes(tag)
+      selectedTag: tag
     });
   };
 
@@ -92,8 +94,8 @@ const Index = () => {
       {/* Filter Chips */}
       <div className="mt-6 px-4">
         <FilterChipsRow 
-          selectedChips={selectedChips}
-          onChipToggle={handleChipToggle}
+          selectedTag={selectedTag}
+          onTagSelect={handleTagSelect}
         />
       </div>
 

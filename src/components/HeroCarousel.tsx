@@ -11,6 +11,8 @@ interface Card {
   applyUrl: string;
   tags: string[];
   score?: number;
+  originalRank: number;
+  reactKey?: string;
 }
 
 interface HeroCarouselProps {
@@ -61,23 +63,23 @@ const HeroCarousel = ({ cards }: HeroCarouselProps) => {
 
   return (
     <div 
-      className="flex overflow-x-auto gap-4 px-4 scrollbar-hide snap-x snap-mandatory"
+      className="flex overflow-x-auto gap-4 px-4 scrollbar-hide snap-x snap-mandatory md:overflow-visible md:grid md:grid-cols-2 md:gap-6"
       style={{ scrollBehavior: 'smooth' }}
       ref={carouselRef}
       onScroll={handleScroll}
     >
       {cards.map((card, index) => (
         <div 
-          key={card.cardId}
-          className="flex-none snap-start glass-card group hover:glass-card-hover transition-all duration-500 ease-out transform hover:scale-[1.02] animate-fade-in"
+          key={card.reactKey || card.cardId}
+          className="flex-none snap-start liquid-glass-card group transition-all duration-300 ease-out transform hover:scale-[1.02] animate-fade-in md:hover:translate-x-2"
           style={{ 
             width: '84vw', 
             minHeight: '280px',
-            animationDelay: `${index * 100}ms`
+            animationDelay: `${index * 50}ms`
           }}
         >
-          {/* Glass overlay background */}
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-xl border border-white/20" />
+          {/* Enhanced Liquid Glass overlay */}
+          <div className="absolute inset-0 rounded-2xl liquid-glass-surface" />
           
           {/* Content container */}
           <div className="relative z-10 p-6 h-full flex flex-col">
@@ -119,7 +121,7 @@ const HeroCarousel = ({ cards }: HeroCarouselProps) => {
             {/* CTA Button */}
             <button
               onClick={() => handleApplyClick(card.cardId, index)}
-              className="w-full glass-button group/btn text-white py-3 px-4 rounded-xl font-medium flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-2xl transform hover:scale-[1.02]"
+              className="w-full liquid-glass-button group/btn text-white py-3 px-4 rounded-xl font-medium flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-2xl transform hover:scale-[1.02]"
               style={{ minHeight: '44px' }}
             >
               Apply

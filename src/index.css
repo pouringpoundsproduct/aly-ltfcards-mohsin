@@ -102,22 +102,21 @@
   }
 }
 
-/* Liquid Glass Design System */
+/* WWDC25 Authentic Liquid Glass Design System */
 @layer components {
-  .glass-card {
-    @apply relative overflow-hidden rounded-2xl border border-white/20;
-    background: linear-gradient(135deg, 
-      rgba(255, 255, 255, 0.9) 0%, 
-      rgba(255, 255, 255, 0.7) 50%, 
-      rgba(255, 255, 255, 0.6) 100%);
-    backdrop-filter: blur(20px);
-    box-shadow: 
-      0 8px 32px rgba(0, 0, 0, 0.1),
-      0 2px 8px rgba(0, 0, 0, 0.05),
-      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  .liquid-glass-card {
+    @apply relative overflow-hidden rounded-2xl;
   }
 
-  .glass-card::before {
+  .liquid-glass-surface {
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(32px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.12);
+    border-radius: 12px;
+  }
+
+  .liquid-glass-surface::before {
     content: '';
     position: absolute;
     top: 0;
@@ -127,18 +126,16 @@
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
   }
 
-  .glass-card-hover {
-    background: linear-gradient(135deg, 
-      rgba(255, 255, 255, 0.95) 0%, 
-      rgba(255, 255, 255, 0.8) 50%, 
-      rgba(255, 255, 255, 0.7) 100%);
-    box-shadow: 
-      0 16px 64px rgba(0, 0, 0, 0.15),
-      0 4px 16px rgba(0, 0, 0, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  .liquid-glass-surface::after {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.16) 0%, transparent 50%);
+    pointer-events: none;
   }
 
-  .glass-button {
+  .liquid-glass-button {
     background: linear-gradient(135deg, 
       rgba(17, 24, 39, 0.9) 0%, 
       rgba(17, 24, 39, 0.8) 100%);
@@ -149,7 +146,7 @@
       inset 0 1px 0 rgba(255, 255, 255, 0.1);
   }
 
-  .glass-button:hover {
+  .liquid-glass-button:hover {
     background: linear-gradient(135deg, 
       rgba(17, 24, 39, 0.95) 0%, 
       rgba(17, 24, 39, 0.85) 100%);
@@ -157,9 +154,42 @@
       0 8px 32px rgba(0, 0, 0, 0.3),
       inset 0 1px 0 rgba(255, 255, 255, 0.15);
   }
+
+  /* Chip micro-interactions */
+  .chip {
+    transition: transform 0.12s ease-out, background-color 0.2s ease-out;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .chip:active {
+    transform: scale(0.95);
+  }
+
+  .chip-selected::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: rgba(255, 255, 255, 0.25);
+    animation: ripple 0.2s ease-out;
+    pointer-events: none;
+  }
+
+  /* Desktop responsive enhancements */
+  @media (min-width: 768px) {
+    .liquid-glass-card {
+      width: 50vw !important;
+      height: 60vh;
+    }
+
+    .liquid-glass-card:hover {
+      transform: translateX(20px) scale(1.02);
+    }
+  }
 }
 
-/* Enhanced Animations */
+/* Enhanced Animations with FLIP-style transitions */
 @layer utilities {
   @keyframes fade-in {
     from {
@@ -174,12 +204,34 @@
 
   @keyframes slide-in {
     from {
-      transform: translateX(-10px);
+      transform: translateX(-30px) scale(0.9);
       opacity: 0;
     }
     to {
-      transform: translateX(0);
+      transform: translateX(0) scale(1);
       opacity: 1;
+    }
+  }
+
+  @keyframes slide-out {
+    from {
+      transform: translateX(0) scale(1);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(30px) scale(0.9);
+      opacity: 0;
+    }
+  }
+
+  @keyframes ripple {
+    from {
+      opacity: 1;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(1.4);
     }
   }
 
@@ -188,7 +240,11 @@
   }
 
   .animate-slide-in {
-    animation: slide-in 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+    animation: slide-in 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+  }
+
+  .animate-slide-out {
+    animation: slide-out 0.25s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
   }
 }
 
